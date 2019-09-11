@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "start": "npm run build && webpack-dev-server --hot --inline --progress --open",
-    "pub": "npm version patch && npm run build && git add . && git commit -m 'new build' --allow-empty && npm publish"
+    "pub": "npm version patch && npm run build && git add . && git commit -m 'new build' --allow-empty && npm publish  --access=public"
   },
   "repository": {
     "type": "git",
