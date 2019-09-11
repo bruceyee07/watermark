@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>水印</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body, #app {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    我爱中国🇨🇳
+  </div>
+
+  <script src="./app.bundle.js"></script>
+  <script>
+    new WaterMark({
+      container: '#app'
+    });
+  </script>
+</body>
+
+</html>

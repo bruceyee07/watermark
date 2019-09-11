@@ -1,0 +1,35 @@
+{
+  "name": "watermark",
+  "version": "0.0.1",
+  "description": "watermark component",
+  "main": "src/main.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "npm run build && webpack-dev-server --hot --inline --progress --open",
+    "pub": "npm version patch && npm run build && git add . && git commit -m 'new build' --allow-empty && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tiny09/watermark.git"
+  },
+  "keywords": [
+    "watermark"
+  ],
+  "author": "tiny09",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "html-webpack-plugin": "^4.0.0-beta.3",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  }
+}
