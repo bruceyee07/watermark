@@ -1,4 +1,4 @@
-const defaultFontFamily = '"lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
+const defaultFontFamily = '"lucida grande", "lucida sans unicode", lucida, helvetica,         "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif';
 
 /**
 *
@@ -49,11 +49,9 @@ function throttle(fn, threshhold) {
 
 export default class WaterMark {
   constructor(options = {}) {
-    this.container = options.container;
+    this.container = options.container || document.body;
     this.width = options.width || 200;
     this.height = options.height || 120;
-    this.scrollWidth = '';
-    this.scrollHeight = '';
     this.content = options.content || '内部信息，请勿外传';
     this.fontSize = options.fontSize || '14px';
     this.fontFamily = options.fontFamily || defaultFontFamily;
@@ -61,11 +59,15 @@ export default class WaterMark {
     this.textAlign = options.textAlign || 'center';
     this.textBaseline = options.textBaseline || 'middle';
     this.strokeStyle = options.strokeStyle || '';
-    this.lineHeight = options.lineHeight || 70;
     this.position = options.position || 'absolute';
     this.zIndex = options.zIndex || 9999;
     this.rotate = options.rotate || -15;
     this.throttleTime = options.throttleTime || 300;
+    this.watch = options.watch || true;
+
+    this.scrollWidth = '';
+    this.scrollHeight = '';
+    this.wm = null;
     this.base64Url = '';
     this.mutationObserver = null;
     this.reset = throttle(this.reset.bind(this), this.throttleTime);
@@ -76,24 +78,20 @@ export default class WaterMark {
   }
 
   init() {
-    const base64Url = this.drawCanvas();
-
-    const targetNode = this.container ? 
-      document.querySelector(this.container) : document.body;
+    this.drawCanvas();
+    this.wm = document.createElement('div');
 
     this.setContainerSize();
-    const prefixStyle = this.getStyle();
-    const style = `${prefixStyle};background-image:url('${base64Url}');`;
-    targetNode.setAttribute('style', style);
+
+    const style = this.getStyle();
+    this.wm.setAttribute('style', style);
+    this.container.insertBefore(this.wm, this.container.firstChild)
 
     this.handleObserver();
   }
 
   drawCanvas() {
-    if (this.base64Url) {
-      return this.base64Url;
-    }
-
+    // TODO: canvas线条精度
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -107,9 +105,9 @@ export default class WaterMark {
     ctx.fillStyle = this.fillStyle;
     ctx.rotate(this.rotate / 180 * Math.PI);
     
-    const x = this.width / 2;
-    const y = this.height / 2 + this.lineHeight;
-    const maxWidth = this.width;
+    const x = parseFloat(this.width) / 2;
+    const y = parseFloat(this.height) / 2;
+    const maxWidth = parseFloat(this.width);
 
     ctx.fillText(this.content, x, y, maxWidth);
 
@@ -119,20 +117,28 @@ export default class WaterMark {
     }
     
     this.base64Url = canvas.toDataURL();
-
-    return this.base64Url;
   }
 
   getStyle() {
-    return `position:${this.position};top:0;left:0;z-index:${this.zIndex};
-      width:${this.scrollWidth}px;height:${this.scrollHeight}px;background-repeat:repeat;
-      pointer-events:none;background-size:${this.width}px ${this.height}px;`;
+    return `
+      position: ${this.position};
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: ${this.zIndex};
+      width: ${this.scrollWidth}px;
+      height: ${this.scrollHeight}px;
+      background-repeat: repeat;
+      pointer-events: none;
+      background-size: ${this.width}px ${this.height}px;
+      background-image:url('${this.base64Url}');
+    `;
   }
 
   setContainerSize() {
-    const targetNode = this.container ?
-      document.querySelector(this.container) : document.body;
-    const { scrollWidth, scrollHeight } = targetNode;
+    const { scrollWidth, scrollHeight } = this.container;
+
     this.scrollWidth = scrollWidth;
     this.scrollHeight = scrollHeight;
   }
@@ -146,15 +152,12 @@ export default class WaterMark {
           let type = mutation.type;
           switch (type) {
             case "childList":
-              console.log("A child node has been added or removed.");
               this.reset();
               break;
             case "attributes":
-              console.log(`The ${mutation.attributeName} attribute was modified.`);
               this.reset();
               break;
             case "subtree":
-              console.log(`The subtree was modified.`);
               this.reset();
               break;
             default:
@@ -165,22 +168,25 @@ export default class WaterMark {
 
       this.mutationObserver = new MutationObserver(mutationCallback);
 
-      const targetNode = this.container ?
-        document.querySelector(this.container) : document.body;
-
       const config = {
         attributes: true,
         childList: true,
         subtree: true
       };
 
-      this.mutationObserver.observe(targetNode, config);
+      this.mutationObserver.observe(this.container, config);
     }
   }
 
   reset() {
     this.mutationObserver.disconnect();
     this.mutationObserver = null;
+    
+    if (this.wm instanceof Element) {
+      this.container.removeChild(this.wm);
+      this.wm = null;
+    }
+    
     this.init();
   }
 }
