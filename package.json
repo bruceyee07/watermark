@@ -4,7 +4,7 @@
   "description": "watermark component",
   "main": "src/main.js",
   "scripts": {
-    "build": "cross-env NODE_ENV=production && webpack",
+    "build": "NODE_ENV=production && webpack",
     "start": "npm run build && webpack-dev-server --hot --inline --progress --open",
     "pub": "npm version patch && npm run build && git add . && git commit -m 'new build' --allow-empty && npm publish  --access=public"
   },
