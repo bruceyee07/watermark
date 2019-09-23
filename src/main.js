@@ -47,6 +47,10 @@ function throttle(fn, threshhold) {
   }
 }
 
+function getPixelRatio () {
+  return window.devicePixelRatio;
+};
+
 export default class WaterMark {
   constructor(options = {}) {
     this.container = options.container || document.body;
@@ -91,13 +95,21 @@ export default class WaterMark {
   }
 
   drawCanvas() {
-    // TODO: canvas线条精度
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    const ratio = getPixelRatio();
 
     canvas.id = 'canvas';
     canvas.setAttribute('width', this.width);
     canvas.setAttribute('height', this.height);
+
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+
+    canvas.width = canvas.width * ratio;
+    canvas.height = canvas.height * ratio;
+
+    ctx.scale(ratio, ratio);
 
     ctx.textAlign = this.textAlign;
     ctx.textBaseline = this.textBaseline;
