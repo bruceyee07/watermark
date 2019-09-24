@@ -4,9 +4,9 @@
   "description": "watermark component",
   "main": "src/main.js",
   "scripts": {
-    "build": "NODE_ENV=production && webpack",
-    "start": "npm run build && webpack-dev-server --hot --inline --progress --open",
-    "pub": "npm version patch && npm run build && git add . && git commit -m 'new build' --allow-empty && npm publish  --access=public"
+    "build": "webpack --config build/webpack.prod.conf.js",
+    "start": "webpack && webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "pub": "npm version patch && npm run build && git add . && git commit -m 'Package version updated' --allow-empty && npm publish  --access=public"
   },
   "repository": {
     "type": "git",
@@ -27,9 +27,11 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "html-webpack-plugin": "^4.0.0-beta.3",
+    "ora": "^4.0.1",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.8.0",
+    "webpack-merge": "^4.2.2"
   }
 }
