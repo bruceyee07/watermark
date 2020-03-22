@@ -1,6 +1,6 @@
 {
   "name": "@tiny09/watermark",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "watermark component",
   "main": "src/main.js",
   "scripts": {
